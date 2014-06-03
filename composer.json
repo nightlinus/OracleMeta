@@ -1,5 +1,5 @@
 {
-    "name": "nightlinus/OracleMeta",
+    "name": "nightlinus/oracle-meta",
     "description": "Package to control table structures",
     "minimum-stability": "dev",
     "license": "MIT",
@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "nightlinus/OracleDb": "*"
+        "nightlinus/oracle-db": "*"
     },
     "autoload": {
         "psr-4": {
