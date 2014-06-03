@@ -1,0 +1,26 @@
+{
+    "name": "nightlinus/OracleMeta",
+    "description": "Package to control table structures",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mikhail Chervontsev",
+            "email": "m.a.ogarkov@gmail.com"
+        }
+    ],
+    "require": {
+        "nightlinus/OracleDb": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "nightlinus\\OracleMeta\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "url": "https://github.com/nightlinus/OracleDb.git",
+            "type": "git"
+        }
+    ]
+}

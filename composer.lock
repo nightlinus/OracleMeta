@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "57d56f51ef53b2daf267a112abaa7583",
+    "packages": [
+        {
+            "name": "nightlinus/OracleDb",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nightlinus/OracleDb.git",
+                "reference": "179a3a9eecfdc53c1f95ffec862bef05accbdff7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "nightlinus\\OracleDb\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mikhail.Ogarkov",
+                    "email": "m.a.ogarkov@gmail.com"
+                }
+            ],
+            "description": "Wrapper around oci8 php extension to access Oracle Database",
+            "time": "2014-06-03 11:59:56"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "dev",
+    "stability-flags": [
+
+    ],
+    "platform": [
+
+    ],
+    "platform-dev": [
+
+    ]
+}
