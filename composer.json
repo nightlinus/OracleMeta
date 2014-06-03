@@ -16,11 +16,5 @@
         "psr-4": {
             "nightlinus\\OracleMeta\\": "src/"
         }
-    },
-    "repositories": [
-        {
-            "url": "https://github.com/nightlinus/OracleDb.git",
-            "type": "git"
-        }
-    ]
+    }
 }
