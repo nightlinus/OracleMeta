@@ -15,10 +15,10 @@ namespace nightlinus\OracleMeta;
 
 
 /**
- * Class Model
+ * Class Schema
  * @package nightlinus\OracleMeta
  */
-class Model
+class Schema
 {
 
     /**
@@ -63,13 +63,15 @@ class Model
         foreach ($statement as $row) {
             $column = new Column(
                 $row[ 'COLUMN_ID' ],
+                $row[ 'OWNER' ],
+                $row[ 'TABLE_NAME' ],
                 $row[ 'DATA_LENGTH' ],
                 $row[ 'COLUMN_NAME' ],
                 $row[ 'NULLABLE' ],
                 $row[ 'DATA_PRECISION' ],
                 $row[ 'DATA_SCALE' ],
                 $row[ 'DATA_TYPE' ],
-                $row[ 'COMMENTS']
+                $row[ 'COMMENTS' ]
             );
             $relation->addColumn($column);
             $columns[ $column->getName() ] = $column;
@@ -219,5 +221,20 @@ class Model
         $this->getConstraints($relation);
 
         return $relation;
+    }
+
+    public function getSequences($owner)
+    {
+
+    }
+
+    public function getSequence($name, $owner)
+    {
+
+    }
+
+    public function setTableComment($relation, $comment)
+    {
+
     }
 }
