@@ -36,16 +36,23 @@ class Column
 
     protected $type;
 
+    protected $owner;
+
+    protected $tableName;
+
     /**
      * @param $id
+     * @param $owner
+     * @param $tableName
      * @param $length
      * @param $name
      * @param $nullable
      * @param $precision
      * @param $scale
      * @param $type
+     * @param $comment
      */
-    public function __construct($id, $length, $name, $nullable, $precision, $scale, $type, $comment)
+    public function __construct($id, $owner, $tableName, $length, $name, $nullable, $precision, $scale, $type, $comment)
     {
         $this->id = $id;
         $this->length = $length;
@@ -55,6 +62,8 @@ class Column
         $this->scale = $scale;
         $this->type = $type;
         $this->comment = $comment;
+        $this->owner = $owner;
+        $this->tableName = $tableName;
     }
 
     /**
@@ -100,6 +109,14 @@ class Column
     /**
      * @return mixed
      */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getPrecision()
     {
         return $this->precision;
@@ -120,6 +137,14 @@ class Column
     {
         $comment = explode("\n", $this->getComment());
         return $comment[ 0 ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTableName()
+    {
+        return $this->tableName;
     }
 
     /**
