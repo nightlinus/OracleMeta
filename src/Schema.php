@@ -210,12 +210,12 @@ class Schema
             throw new Exception("No table $owner.$name or you dont have enough permissions");
         }
         $relation = new Relation(
-            $row['TABLE_NAME'],
-            $row['OWNER'],
-            $row['TABLESPACE_NAME'],
-            $row['STATUS'],
-            $row['NUM_ROWS'],
-            $row['COMMENTS']
+            $row[ 'TABLE_NAME' ],
+            $row[ 'OWNER' ],
+            $row[ 'TABLESPACE_NAME' ],
+            $row[ 'STATUS' ],
+            $row[ 'NUM_ROWS' ],
+            $row[ 'COMMENTS' ]
         );
         $this->getColumns($relation);
         $this->getConstraints($relation);
@@ -223,18 +223,111 @@ class Schema
         return $relation;
     }
 
+    /**
+     * @param $owner
+     * @return \array[]|\Generator
+     */
     public function getSequences($owner)
     {
+        $sql = "SELECT
+                  SEQUENCE_OWNER,
+                  SEQUENCE_NAME
+                FROM ALL_SEQUENCES
+                WHERE SEQUENCE_OWNER = :b_owner";
+        $statement = $this->db->query($sql, [ 'b_owner' => $owner ]);
+        $row = $statement->fetchAssoc();
 
+        return $row;
     }
 
+    /**
+     * @param $name
+     * @param $owner
+     * @return \array[]
+     */
     public function getSequence($name, $owner)
     {
+        $sql = "SELECT
+                  SEQUENCE_OWNER,
+                  SEQUENCE_NAME,
+                  MIN_VALUE,
+                  MAX_VALUE,
+                  INCREMENT_BY,
+                  CYCLE_FLAG,
+                  ORDER_FLAG,
+                  CACHE_SIZE,
+                  LAST_NUMBER
+                FROM ALL_SEQUENCES
+                WHERE SEQUENCE_OWNER = :b_owner
+                  AND SEQUENCE_NAME = :b_name";
+        $statement = $this->db->query($sql, [ 'b_name' => $name, 'b_owner' => $owner ]);
+        $row = $statement->fetchOne();
+        $sequence = new Sequence(
+            $row[ 'SEQUENCE_NAME' ],
+            $row[ 'SEQUENCE_OWNER' ],
+            $row[ 'MIN_VALUE' ],
+            $row[ 'MAX_VALUE' ],
+            $row[ 'INCREMENT_BY' ],
+            $row[ 'CYCLE_FLAG' ],
+            $row[ 'ORDER_FLAG' ],
+            $row[ 'CACHE_SIZE' ],
+            $row[ 'LAST_NUMBER' ]
+        );
 
+        return $sequence;
     }
 
+    /**
+     * @param Relation $relation
+     * @param string $comment
+     * @return $this
+     */
     public function setTableComment($relation, $comment)
     {
+        $owner = $relation->getOwner();
+        $name = $relation->getName();
+        $sql = "COMMENT ON TABLE $owner.$name IS :b_comment";
+        $this->db->query($sql, [ 'b_comment' => $comment ]);
 
+        return $this;
+    }
+
+    /**
+     * @param Column $column
+     * @param string $comment
+     * @return $this
+     */
+    public function setColumnComment($column, $comment)
+    {
+        $owner = $column->getOwner();
+        $name = $column->getName();
+        $table = $column->getTableName();
+        $sql = "COMMENT ON COLUMN $owner.$table.$name IS :b_comment";
+        $this->db->query($sql, [ 'b_comment' => $comment ]);
+
+        return $this;
+    }
+
+    /**
+     * @return array|\Generator
+     */
+    public function getSchemes()
+    {
+        $sql = "SELECT USERNAME FROM ALL_USERS";
+        $st = $this->db->query($sql);
+
+        return $st->fetchColumn();
+    }
+
+    /**
+     * @param $owner
+     * @return array|\Generator
+     */
+    public function getTables($owner)
+    {
+        $sql = "SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER = :b_owner";
+        $st = $this->db->query($sql, ['b_owner' => $owner]);
+
+        return $st->fetchColumn();
     }
 }
