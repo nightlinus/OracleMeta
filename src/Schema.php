@@ -50,7 +50,9 @@ class Schema
                        t_atc.DATA_SCALE,
                        t_atc.NULLABLE,
                        t_atc.COLUMN_ID,
-                       t_acc.COMMENTS
+                       t_acc.COMMENTS,
+                       t_atc.OWNER,
+                       t_atc.TABLE_NAME
                 FROM ALL_TAB_COLUMNS t_atc
                      JOIN ALL_COL_COMMENTS t_acc
                      ON t_acc.COLUMN_NAME = t_atc.COLUMN_NAME
