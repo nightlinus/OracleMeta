@@ -288,8 +288,8 @@ class Schema
     {
         $owner = $relation->getOwner();
         $name = $relation->getName();
-        $sql = "COMMENT ON TABLE $owner.$name IS :b_comment";
-        $this->db->query($sql, [ 'b_comment' => $comment ]);
+        $sql = "COMMENT ON TABLE $owner.$name IS '$comment'";
+        $this->db->query($sql);
 
         return $this;
     }
@@ -304,8 +304,8 @@ class Schema
         $owner = $column->getOwner();
         $name = $column->getName();
         $table = $column->getTableName();
-        $sql = "COMMENT ON COLUMN $owner.$table.$name IS :b_comment";
-        $this->db->query($sql, [ 'b_comment' => $comment ]);
+        $sql = "COMMENT ON COLUMN $owner.$table.$name IS '$comment'";
+        $this->db->query($sql);
 
         return $this;
     }
