@@ -45,6 +45,8 @@ class Constraint
 
     protected $type;
 
+    protected $owner;
+
     /**
      * @param $name
      * @param $referenceConstraint
@@ -52,8 +54,9 @@ class Constraint
      * @param $status
      * @param $type
      * @param $table
+     * @param $owner
      */
-    public function __construct($name, $referenceConstraint, $referenceOwner, $status, $type, $table)
+    public function __construct($name, $referenceConstraint, $referenceOwner, $status, $type, $table, $owner)
     {
         $this->name = $name;
         $this->referenceConstraint = $referenceConstraint;
@@ -61,6 +64,7 @@ class Constraint
         $this->status = $status;
         $this->type = $type;
         $this->table = $table;
+        $this->owner = $owner;
     }
 
     /**
@@ -103,6 +107,14 @@ class Constraint
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOwner()
+    {
+        return $this->owner;
     }
 
     /**
