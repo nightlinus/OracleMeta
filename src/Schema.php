@@ -186,6 +186,20 @@ class Schema
     }
 
     /**
+     * @param Constraint $constraint
+     *
+     * @return Constraint
+     * @throws \Exception
+     */
+    public function getReferenceConstraint(Constraint $constraint)
+    {
+        $owner = $constraint->getReferenceOwner();
+        $name = $constraint->getReferenceConstraint();
+
+        return $this->getConstraint($name, $owner);
+    }
+
+    /**
      * @param string $name
      * @param string $owner
      *
