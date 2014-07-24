@@ -126,7 +126,8 @@ class Schema
                        R_OWNER,
                        R_CONSTRAINT_NAME,
                        STATUS,
-                       TABLE_NAME
+                       TABLE_NAME,
+                       OWNER
                 FROM ALL_CONSTRAINTS
                 WHERE OWNER = :b_owner
                   AND TABLE_NAME = :b_name";
@@ -139,7 +140,8 @@ class Schema
                 $row[ 'R_OWNER' ],
                 $row[ 'STATUS' ],
                 $row[ 'CONSTRAINT_TYPE' ],
-                $row[ 'TABLE_NAME' ]
+                $row[ 'TABLE_NAME' ],
+                $row[ 'OWNER' ]
             );
             $relation->addConstraint($constraint);
             $this->getConstraintColumns($constraint);
@@ -163,7 +165,8 @@ class Schema
                        R_OWNER,
                        R_CONSTRAINT_NAME,
                        STATUS,
-                       TABLE_NAME
+                       TABLE_NAME,
+                       OWNER
                 FROM ALL_CONSTRAINTS
                 WHERE OWNER = :b_owner
                   AND CONSTRAINT_NAME = :b_name";
@@ -178,7 +181,8 @@ class Schema
             $row[ 'R_OWNER' ],
             $row[ 'STATUS' ],
             $row[ 'CONSTRAINT_TYPE' ],
-            $row[ 'TABLE_NAME' ]
+            $row[ 'TABLE_NAME' ],
+            $row[ 'OWNER' ]
         );
         $this->getConstraintColumns($constraint);
 
