@@ -41,7 +41,7 @@ class Constraint
 
     protected $status;
 
-    protected $table;
+    protected $tableName;
 
     protected $type;
 
@@ -63,7 +63,7 @@ class Constraint
         $this->referenceOwner = $referenceOwner;
         $this->status = $status;
         $this->type = $type;
-        $this->table = $table;
+        $this->tableName = $table;
         $this->owner = $owner;
     }
 
@@ -144,9 +144,9 @@ class Constraint
     /**
      * @return mixed
      */
-    public function getTable()
+    public function getTableName()
     {
-        return $this->table;
+        return $this->tableName;
     }
 
     /**
