@@ -104,12 +104,25 @@ class Relation
         return $this;
     }
 
+    public function getColumn($name)
+    {
+        return isset($this->columns[ $name ]) ? $this->columns[ $name ] : null;
+    }
+
     /**
      * @return Column[]
      */
     public function getColumns()
     {
         return $this->columns;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
     }
 
     /**
@@ -145,11 +158,17 @@ class Relation
     }
 
     /**
-     * @return string
+     * @return Constraint
      */
-    public function getComment()
+    public function getPrimaryKey()
     {
-        return $this->comment;
+        foreach ($this->getConstraints() as $constraint) {
+            if ($constraint->isPrimaryKey()) {
+                return $constraint;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -174,19 +193,5 @@ class Relation
     public function getTableSpace()
     {
         return $this->tableSpace;
-    }
-
-    /**
-     * @return Constraint
-     */
-    public function getPrimaryKey()
-    {
-        foreach ($this->getConstraints() as $constraint) {
-            if ($constraint->isPrimaryKey()) {
-                return $constraint;
-            }
-        }
-
-        return null;
     }
 }
