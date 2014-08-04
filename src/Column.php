@@ -20,6 +20,8 @@ namespace nightlinus\OracleMeta;
 class Column
 {
 
+    const YES = 'Y';
+
     protected $comment;
 
     protected $id;
@@ -153,5 +155,14 @@ class Column
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNullable()
+    {
+        $value = strtoupper($this->nullable);
+        return $value === self::YES ? true : false;
     }
 }
