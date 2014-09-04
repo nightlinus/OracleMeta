@@ -43,7 +43,7 @@ class Schema
      * @throws Exception
      * @return $this
      */
-    public function addColumn($relation, $name, $type, $size = null)
+    public function addColumn(&$relation, $name, $type, $size = null)
     {
         $owner = $relation->getOwner();
         $table = $relation->getName();
