@@ -350,4 +350,46 @@ class Schema
 
         return $st->fetchColumn();
     }
+
+    /**
+     * @param Relation $relation
+     * @param string $name
+     * @param string $type
+     * @param int $size
+     *
+     * @throws Exception
+     * @return $this
+     */
+    public function addColumn($relation, $name, $type, $size = null)
+    {
+        $owner = $relation->getOwner();
+        $table = $relation->getName();
+        if ($size) {
+            $size = "($size)";
+        }
+        $sql = "ALTER TABLE $owner.$table
+                ADD ($name $type $size)";
+        $this->db->query($sql);
+        $relation = $this->getRelation($table, $owner);
+
+        return $this;
+    }
+
+    /**
+     * @param Column $column
+     *
+     * @return $this
+     */
+    public function deleteColumn($column)
+    {
+        $owner = $column->getOwner();
+        $table = $column->getTableName();
+        $name = $column->getName();
+        $sql = "ALTER TABLE $owner.$table
+                DROP COLUMN $name";
+
+        $this->db->query($sql);
+
+        return $this;
+    }
 }
