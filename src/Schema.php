@@ -36,6 +36,48 @@ class Schema
 
     /**
      * @param Relation $relation
+     * @param string $name
+     * @param string $type
+     * @param int $size
+     *
+     * @throws Exception
+     * @return $this
+     */
+    public function addColumn($relation, $name, $type, $size = null)
+    {
+        $owner = $relation->getOwner();
+        $table = $relation->getName();
+        if ($size) {
+            $size = "($size)";
+        }
+        $sql = "ALTER TABLE $owner.$table
+                ADD ($name $type $size)";
+        $this->db->query($sql);
+        $relation = $this->getRelation($table, $owner);
+
+        return $this;
+    }
+
+    /**
+     * @param Column $column
+     *
+     * @return $this
+     */
+    public function deleteColumn($column)
+    {
+        $owner = $column->getOwner();
+        $table = $column->getTableName();
+        $name = $column->getName();
+        $sql = "ALTER TABLE $owner.$table
+                DROP COLUMN $name";
+
+        $this->db->query($sql);
+
+        return $this;
+    }
+
+    /**
+     * @param Relation $relation
      *
      * @return Column[]
      */
@@ -80,6 +122,44 @@ class Schema
         }
 
         return $columns;
+    }
+
+    /**
+     * @param string $name
+     * @param string $owner
+     *
+     * @throws \Exception
+     * @return Constraint
+     */
+    public function getConstraint($name, $owner)
+    {
+        $sql = "SELECT CONSTRAINT_NAME,
+                       CONSTRAINT_TYPE,
+                       R_OWNER,
+                       R_CONSTRAINT_NAME,
+                       STATUS,
+                       TABLE_NAME,
+                       OWNER
+                FROM ALL_CONSTRAINTS
+                WHERE OWNER = :b_owner
+                  AND CONSTRAINT_NAME = :b_name";
+        $statement = $this->db->query($sql, [ 'b_name' => $name, 'b_owner' => $owner ]);
+        $row = $statement->fetchOne();
+        if ($row === null) {
+            throw new \Exception("No such constraint or you dont have enough permissions: $owner.$name");
+        }
+        $constraint = new Constraint(
+            $row[ 'CONSTRAINT_NAME' ],
+            $row[ 'R_CONSTRAINT_NAME' ],
+            $row[ 'R_OWNER' ],
+            $row[ 'STATUS' ],
+            $row[ 'CONSTRAINT_TYPE' ],
+            $row[ 'TABLE_NAME' ],
+            $row[ 'OWNER' ]
+        );
+        $this->getConstraintColumns($constraint);
+
+        return $constraint;
     }
 
     /**
@@ -152,44 +232,6 @@ class Schema
     }
 
     /**
-     * @param string $name
-     * @param string $owner
-     *
-     * @throws \Exception
-     * @return Constraint
-     */
-    public function getConstraint($name, $owner)
-    {
-        $sql = "SELECT CONSTRAINT_NAME,
-                       CONSTRAINT_TYPE,
-                       R_OWNER,
-                       R_CONSTRAINT_NAME,
-                       STATUS,
-                       TABLE_NAME,
-                       OWNER
-                FROM ALL_CONSTRAINTS
-                WHERE OWNER = :b_owner
-                  AND CONSTRAINT_NAME = :b_name";
-        $statement = $this->db->query($sql, [ 'b_name' => $name, 'b_owner' => $owner ]);
-        $row = $statement->fetchOne();
-        if ($row === null) {
-            throw new \Exception("No such constraint or you dont have enough permissions: $owner.$name");
-        }
-        $constraint = new Constraint(
-            $row[ 'CONSTRAINT_NAME' ],
-            $row[ 'R_CONSTRAINT_NAME' ],
-            $row[ 'R_OWNER' ],
-            $row[ 'STATUS' ],
-            $row[ 'CONSTRAINT_TYPE' ],
-            $row[ 'TABLE_NAME' ],
-            $row[ 'OWNER' ]
-        );
-        $this->getConstraintColumns($constraint);
-
-        return $constraint;
-    }
-
-    /**
      * @param Constraint $constraint
      *
      * @return Constraint
@@ -244,20 +286,14 @@ class Schema
     }
 
     /**
-     * @param $owner
-     * @return \array[]|\Generator
+     * @return array|\Generator
      */
-    public function getSequences($owner)
+    public function getSchemes()
     {
-        $sql = "SELECT
-                  SEQUENCE_OWNER,
-                  SEQUENCE_NAME
-                FROM ALL_SEQUENCES
-                WHERE SEQUENCE_OWNER = :b_owner";
-        $statement = $this->db->query($sql, [ 'b_owner' => $owner ]);
-        $row = $statement->fetchAssoc();
+        $sql = "SELECT USERNAME FROM ALL_USERS";
+        $st = $this->db->query($sql);
 
-        return $row;
+        return $st->fetchColumn();
     }
 
     /**
@@ -298,18 +334,32 @@ class Schema
     }
 
     /**
-     * @param Relation $relation
-     * @param string $comment
-     * @return $this
+     * @param $owner
+     * @return \array[]|\Generator
      */
-    public function setTableComment($relation, $comment)
+    public function getSequences($owner)
     {
-        $owner = $relation->getOwner();
-        $name = $relation->getName();
-        $sql = "COMMENT ON TABLE $owner.$name IS '$comment'";
-        $this->db->query($sql);
+        $sql = "SELECT
+                  SEQUENCE_OWNER,
+                  SEQUENCE_NAME
+                FROM ALL_SEQUENCES
+                WHERE SEQUENCE_OWNER = :b_owner";
+        $statement = $this->db->query($sql, [ 'b_owner' => $owner ]);
+        $row = $statement->fetchAssoc();
 
-        return $this;
+        return $row;
+    }
+
+    /**
+     * @param $owner
+     * @return array|\Generator
+     */
+    public function getTables($owner)
+    {
+        $sql = "SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER = :b_owner";
+        $st = $this->db->query($sql, [ 'b_owner' => $owner ]);
+
+        return $st->fetchColumn();
     }
 
     /**
@@ -329,65 +379,15 @@ class Schema
     }
 
     /**
-     * @return array|\Generator
-     */
-    public function getSchemes()
-    {
-        $sql = "SELECT USERNAME FROM ALL_USERS";
-        $st = $this->db->query($sql);
-
-        return $st->fetchColumn();
-    }
-
-    /**
-     * @param $owner
-     * @return array|\Generator
-     */
-    public function getTables($owner)
-    {
-        $sql = "SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER = :b_owner";
-        $st = $this->db->query($sql, ['b_owner' => $owner]);
-
-        return $st->fetchColumn();
-    }
-
-    /**
      * @param Relation $relation
-     * @param string $name
-     * @param string $type
-     * @param int $size
-     *
-     * @throws Exception
+     * @param string $comment
      * @return $this
      */
-    public function addColumn($relation, $name, $type, $size = null)
+    public function setTableComment($relation, $comment)
     {
         $owner = $relation->getOwner();
-        $table = $relation->getName();
-        if ($size) {
-            $size = "($size)";
-        }
-        $sql = "ALTER TABLE $owner.$table
-                ADD ($name $type $size)";
-        $this->db->query($sql);
-        $relation = $this->getRelation($table, $owner);
-
-        return $this;
-    }
-
-    /**
-     * @param Column $column
-     *
-     * @return $this
-     */
-    public function deleteColumn($column)
-    {
-        $owner = $column->getOwner();
-        $table = $column->getTableName();
-        $name = $column->getName();
-        $sql = "ALTER TABLE $owner.$table
-                DROP COLUMN $name";
-
+        $name = $relation->getName();
+        $sql = "COMMENT ON TABLE $owner.$name IS '$comment'";
         $this->db->query($sql);
 
         return $this;
