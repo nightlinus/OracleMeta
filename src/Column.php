@@ -42,6 +42,8 @@ class Column
 
     protected $tableName;
 
+    protected $default;
+
     /**
      * @param $id
      * @param $owner
@@ -52,9 +54,22 @@ class Column
      * @param $precision
      * @param $scale
      * @param $type
+     * @param $default
      * @param $comment
      */
-    public function __construct($id, $owner, $tableName, $length, $name, $nullable, $precision, $scale, $type, $comment)
+    public function __construct(
+        $id,
+        $owner,
+        $tableName,
+        $length,
+        $name,
+        $nullable,
+        $precision,
+        $scale,
+        $type,
+        $default,
+        $comment
+    )
     {
         $this->id = $id;
         $this->length = $length;
@@ -66,6 +81,7 @@ class Column
         $this->comment = $comment;
         $this->owner = $owner;
         $this->tableName = $tableName;
+        $this->default = $default;
     }
 
     /**
@@ -74,6 +90,14 @@ class Column
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefault()
+    {
+        return $this->default;
     }
 
     /**

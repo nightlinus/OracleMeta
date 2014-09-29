@@ -86,6 +86,7 @@ class Schema
         $owner = $relation->getOwner();
         $name = $relation->getName();
         $sql = "SELECT t_atc.COLUMN_NAME,
+                       t_atc.DATA_DEFAULT,
                        t_atc.DATA_TYPE,
                        t_atc.DATA_LENGTH,
                        t_atc.DATA_PRECISION,
@@ -115,6 +116,7 @@ class Schema
                 $row[ 'DATA_PRECISION' ],
                 $row[ 'DATA_SCALE' ],
                 $row[ 'DATA_TYPE' ],
+                $row[ 'DATA_DEFAULT' ],
                 $row[ 'COMMENTS' ]
             );
             $relation->addColumn($column);
