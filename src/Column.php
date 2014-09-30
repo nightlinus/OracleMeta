@@ -15,6 +15,7 @@ namespace nightlinus\OracleMeta;
 
 /**
  * Class Column
+ *
  * @package nightlinus\OracleMeta
  */
 class Column
@@ -22,7 +23,11 @@ class Column
 
     const YES = 'Y';
 
+    protected $charLength;
+
     protected $comment;
+
+    protected $default;
 
     protected $id;
 
@@ -32,23 +37,22 @@ class Column
 
     protected $nullable;
 
+    protected $owner;
+
     protected $precision;
 
     protected $scale;
 
-    protected $type;
-
-    protected $owner;
-
     protected $tableName;
 
-    protected $default;
+    protected $type;
 
     /**
      * @param $id
      * @param $owner
      * @param $tableName
      * @param $length
+     * @param $charLength
      * @param $name
      * @param $nullable
      * @param $precision
@@ -62,6 +66,7 @@ class Column
         $owner,
         $tableName,
         $length,
+        $charLength,
         $name,
         $nullable,
         $precision,
@@ -69,8 +74,7 @@ class Column
         $type,
         $default,
         $comment
-    )
-    {
+    ) {
         $this->id = $id;
         $this->length = $length;
         $this->name = $name;
@@ -82,6 +86,15 @@ class Column
         $this->owner = $owner;
         $this->tableName = $tableName;
         $this->default = $default;
+        $this->charLength = $charLength;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCharLength()
+    {
+        return $this->charLength;
     }
 
     /**
@@ -162,6 +175,7 @@ class Column
     public function getShortComment()
     {
         $comment = explode("\n", $this->getComment());
+
         return $comment[ 0 ];
     }
 
@@ -187,6 +201,7 @@ class Column
     public function isNullable()
     {
         $value = strtoupper($this->nullable);
+
         return $value === self::YES ? true : false;
     }
 }
