@@ -174,13 +174,15 @@ class Schema
     public function getConstraintColumns(Constraint $constraint)
     {
         $name = $constraint->getName();
+        $owner = $constraint->getOwner();
         $sql = "SELECT OWNER,
                        CONSTRAINT_NAME,
                        TABLE_NAME,
                        COLUMN_NAME
                 FROM ALL_CONS_COLUMNS
-                WHERE CONSTRAINT_NAME = :b_name";
-        $statement = $this->db->query($sql, [ 'b_name' => $name ]);
+                WHERE CONSTRAINT_NAME = :b_name
+                  AND OwNER = :b_owner";
+        $statement = $this->db->query($sql, [ 'b_name' => $name , 'b_owner' => $owner]);
         $columns = [ ];
         foreach ($statement as $row) {
             $constraintColumn = new ConstraintColumn(
