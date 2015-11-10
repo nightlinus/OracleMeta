@@ -103,7 +103,8 @@ class Schema
                       AND t_acc.OWNER = t_atc.OWNER
                       AND t_acc.TABLE_NAME = t_atc.TABLE_NAME
                 WHERE t_atc.OWNER = :b_owner
-                AND t_atc.TABLE_NAME = :b_name";
+                AND t_atc.TABLE_NAME = :b_name
+                ORDER BY t_atc.COLUMN_ID";
         $statement = $this->db->query($sql, [ 'b_name' => $name, 'b_owner' => $owner ]);
         $columns = [ ];
         foreach ($statement as $row) {
